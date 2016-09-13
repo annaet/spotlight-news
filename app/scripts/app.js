@@ -8,5 +8,26 @@
  *
  * Main module of the application.
  */
-angular
-  .module('spotlightNewsApp', []);
+angular.module('spotlightNewsApp', [
+  'ui.router'
+])
+
+.config(function($urlRouterProvider, $stateProvider) {
+  $urlRouterProvider
+  .otherwise('/main');
+
+  var main = {
+    name: 'main',
+    url: '/main',
+    templateUrl: '../views/main.html'
+  };
+
+  var treemap = {
+    name: 'treemap',
+    url: '/treemap',
+    templateUrl: '../views/treemap.html'
+  };
+
+  $stateProvider.state(main);
+  $stateProvider.state(treemap);
+});
