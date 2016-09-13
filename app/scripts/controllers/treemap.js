@@ -31,9 +31,7 @@ angular.module('spotlightNewsApp')
         .style("left", margin.left + "px")
         .style("top", margin.top + "px");
 
-    var url = "https://gateway-a.watsonplatform.net/calls/data/GetNews?apikey=671dd1efc15d076a80954f5a121585d7fdd5ebbc&start=now-7d&end=now&outputMode=json&return=enriched.url.url,enriched.url.title,enriched.url.enrichedTitle.docSentiment.score,enriched.url.entities.entity.text,enriched.url.entities.entity.relevance,enriched.url.entities.entity.sentiment.score,enriched.url.entities.entity.type&q.enriched.url.title=Depression&q.enriched.url.entities.entity.type=drug";
-
-    var docs = [];
+    // var url = "https://gateway-a.watsonplatform.net/calls/data/GetNews?apikey=671dd1efc15d076a80954f5a121585d7fdd5ebbc&start=now-7d&end=now&outputMode=json&return=enriched.url.url,enriched.url.title,enriched.url.enrichedTitle.docSentiment.score,enriched.url.entities.entity.text,enriched.url.entities.entity.relevance,enriched.url.entities.entity.sentiment.score,enriched.url.entities.entity.type&q.enriched.url.title=Depression&q.enriched.url.entities.entity.type=drug";
 
     // $scope.next = function(next) {
     //   var nextUrl = next ? url + '&next=' + next : url;
@@ -60,15 +58,17 @@ angular.module('spotlightNewsApp')
       children: []
     };
 
-          // "name": "cluster",
-          // "children": [{
-          //   "name": "AgglomerativeCluster", "size": 3938},
-          //   {"name": "CommunityStructure", "size": 3812},
-          //   {"name": "HierarchicalCluster", "size": 6714},
-          //   {"name": "MergeEdge", "size": 743}
-          // ]
-          // }
-          // }
+    $scope.acceptedConcepts = [
+      'anatomy',
+      'continent',
+      'drug',
+      'healthcondition',
+      // 'company'
+    ];
+
+    $scope.radio = 'count';
+    $scope.usedConcepts = {};
+    var entities = {};
 
     d3.json("../../json/diabetes.json", function(error, data) {
       if (error) {
@@ -76,15 +76,10 @@ angular.module('spotlightNewsApp')
       }
 
       var docs = data.result.docs;
-      var entities = {};
 
-      var acceptedConcepts = [
-        'anatomy',
-        'country',
-        'drug',
-        'healthcondition',
-        'organisation'
-      ];
+      for (var i = 0; i < $scope.acceptedConcepts.length; ++i) {
+        $scope.usedConcepts[$scope.acceptedConcepts[i]] = true;
+      }
 
       for (var i = 0; i < docs.length; ++i) {
         var doc = docs[i];
@@ -95,48 +90,52 @@ angular.module('spotlightNewsApp')
           var type = entity.type.toLowerCase();
           var text = entity.text.toLowerCase();
 
-          if (!entities[type]) {
+          if (!entities[type] && $scope.acceptedConcepts.indexOf(type) > -1) {
             entities[type] = {};
           }
 
-          if (entities[type][text]) {
-            entities[type][text].push(entity.relevance);
-          } else {
-            entities[type][text] = [entity.relevance];
+          if (entities[type]) {
+            if (entities[type][text]) {
+              entities[type][text].relevance.push(entity.relevance);
+              entities[type][text].count++;
+            } else {
+              entities[type][text] = {
+                relevance: [entity.relevance],
+                count: 1
+              };
+            }
           }
         }
       }
 
       for (var concept in entities) {
-        if (acceptedConcepts.indexOf(concept) > -1) {
-          var child = {
-            name: concept,
-            children: []
-          };
+        var child = {
+          name: concept,
+          children: []
+        };
 
-          for (var entity in entities[concept]) {
-            var relevances = entities[concept][entity];
-            var avg = 0;
+        for (var entity in entities[concept]) {
+          var relevances = entities[concept][entity].relevance;
+          var count = entities[concept][entity].count;
+          var avg = 0;
 
-            for (var k = 0; k < relevances.length; ++k) {
-              avg += relevances[k];
-            }
-
-            avg = avg/relevances.length;
-            child.children.push({
-              name: entity,
-              size: avg
-            });
+          for (var k = 0; k < relevances.length; ++k) {
+            avg += relevances[k];
           }
 
-          flare.children.push(child);
+          avg = avg/relevances.length;
+          child.children.push({
+            name: entity,
+            size: avg * avg,
+            count: count
+          });
         }
+
+        flare.children.push(child);
       }
 
       console.log(entities);
       console.log(flare);
-
-      // flare.children.
 
       var node = div.datum(flare).selectAll(".node")
           .data(treemap.nodes)
@@ -146,17 +145,30 @@ angular.module('spotlightNewsApp')
           .style("background", function(d) { return d.children ? color(d.name) : null; })
           .text(function(d) { return d.children ? null : d.name; });
 
-      d3.selectAll("input").on("change", function change() {
-        var value = this.value === "count"
-            ? function() { return 1; }
-            : function(d) { return d.size; };
+      $scope.change = function() {
+        var value = function(d) {
+          if (d.parent.name === 'flare') {
+          } else if (d.parent.parent.name === 'flare') {
+            if ($scope.usedConcepts[d.parent.name]) {
+              if ($scope.radio === "count") {
+                return d.count;
+              } else {
+                return d.size;
+              }
+            } else {
+              return 0;
+            }
+          }
+        };
 
         node
             .data(treemap.value(value).nodes)
           .transition()
             .duration(1500)
             .call(position);
-      });
+      };
+
+      d3.selectAll("input").on("change", $scope.change());
     });
 
     function position() {

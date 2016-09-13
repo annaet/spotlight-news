@@ -5,4 +5,12 @@
   overflow: hidden;
   position: absolute;
   text-indent: 2px;
+
+  -webkit-box-sizing: initial;
+  -moz-box-sizing: initial;
+  box-sizing: initial;
+}
+
+.treemap-form {
+  float: right;
 }

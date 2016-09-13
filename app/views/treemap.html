@@ -1,1 +1,12 @@
+<form class="treemap-form">
+  <label><input type="radio" ng-model="radio" ng-change="change()" value="size"> Relevance</label>
+  <label><input type="radio" ng-model="radio" ng-change="change()" value="count"> Count</label>
+</form>
+
+<div>
+  <span ng-repeat="concept in acceptedConcepts" style="margin-right: 15px">
+    <input type="checkbox" ng-model="usedConcepts[concept]" ng-change="change()"> {{concept}}
+  </span>
+</div>
+
 <div class="treemap-container"></div>
