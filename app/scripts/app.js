@@ -19,13 +19,15 @@ angular.module('spotlightNewsApp', [
   var main = {
     name: 'main',
     url: '/main',
-    templateUrl: '../views/main.html'
+    templateUrl: '../views/main.html',
+    controller: 'MainCtrl'
   };
 
   var treemap = {
     name: 'treemap',
     url: '/treemap',
-    templateUrl: '../views/treemap.html'
+    templateUrl: '../views/treemap.html',
+    controller: 'TreemapCtrl'
   };
 
   $stateProvider.state(main);
