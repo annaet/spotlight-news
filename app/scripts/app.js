@@ -44,8 +44,16 @@ angular.module('spotlightNewsApp', [
     controller: 'TickerCtrl'
   };
 
+  var dendrogram = {
+    name: 'dendrogram',
+    url: '/dendrogram',
+    templateUrl: '../views/dendrogram.html',
+    controller: 'DendrogramCtrl'
+  };
+
   $stateProvider.state(main);
   $stateProvider.state(treemap);
   $stateProvider.state(search);
   $stateProvider.state(ticker);
+  $stateProvider.state(dendrogram);
 });
