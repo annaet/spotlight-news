@@ -88,41 +88,60 @@ angular.module('spotlightNewsApp')
 
                         d3.json("../../json/diabetes.json", function (error, diabetes) {
                             for (var i in diabetes.result.docs) {
-                                docs[i].countries = [];
+                                diabetes.result.docs[i].countries = [];
                                 for (var j in diabetes.result.docs[i].source.enriched.url.entities) {
                                     if (diabetes.result.docs[i].source.enriched.url.entities[j].type == "Country") {
-                                        diabetes.result.docs[i].push(diabetes.result.docs[i].source.enriched.url.entities[j].text);
-                                        console.log(reverse_data_map[diabetes.result.docs[i].source.enriched.url.entities[j].text]);
+
+                                        var alchemy_country = diabetes.result.docs[i].source.enriched.url.entities[j].text;
+
+                                        if (alchemy_country == "US" || alchemy_country == "U.S." || alchemy_country == "United States") {
+                                            diabetes.result.docs[i].source.enriched.url.entities[j].text = "USA";
+                                        }
+
+                                        if (alchemy_country == "UK" || alchemy_country == "U.K." || alchemy_country == "England", alchemy_country == "Scotland") {
+                                            diabetes.result.docs[i].source.enriched.url.entities[j].text = "United Kingdom";
+                                        }
+
+                                        var countryCode = reverse_data_map[diabetes.result.docs[i].source.enriched.url.entities[j].text.toUpperCase()];
+                                        if (countryCode) {
+                                            diabetes.result.docs[i].countries.push(countryCode);
+                                            if (map[countryCode]) {
+                                                map[countryCode] += 1;
+                                            }
+                                            else {
+                                                map[countryCode] = 1;
+                                            }
+                                        }
                                     }
                                 }
                             }
-                        });
 
-                        d3.json("../../json/world-50m.json", function (error, world) {
-                            if (error) throw error;
-                            initialise_map(litedb, scope.filterData.filter, scope.filterData.date, world);
+                            d3.json("../../json/world-50m.json", function (error, world) {
+                                if (error) throw error;
+                                initialise_map(litedb, scope.filterData.filter, scope.filterData.date, world);
 
-                            scope.$watchCollection('filterData', function (newVal) {// when expData expression changes, execute this
-                                // redraw chart
-                                update_map(litedb, newVal.filter, newVal.date);
-                            })
+                                scope.$watchCollection('filterData', function (newVal) {// when expData expression changes, execute this
+                                    // redraw chart
+                                    update_map(litedb, newVal.filter, newVal.date);
+                                })
+                            });
                         });
                     });
                 });
 
 
                 function initialise_map(litedb, filter_array, date_range, world) {
-                    for (var i = 0; i < litedb.length; i++) {
+                    /*for (var i = 0; i < litedb.length; i++) {
                         var d = litedb[i];
                         if (p_date(d, date_range)) {
                             if (p_country(d, filter_array)) {
                                 populate_map(d, map);
                             }
                         }
-                    }
+                    }*/
                     scope.paperList.the_list = get_id_list(litedb, filter_array, date_range);
                     fullpaperList = scope.paperList.the_list;
-                    console.log(map);
+
                     var map_keys = Object.keys(map).map(function (d) {
                         return map[d]
                     });
@@ -142,6 +161,8 @@ angular.module('spotlightNewsApp')
                         //.range(["#fdd600","#006d5d"]); //yellow -> teal
 
                     var countries = topojson.feature(world, world.objects.countries).features;
+
+
                     svg.selectAll(".country")
                         .data(countries)
                         .enter().insert("path", ".graticule")
@@ -164,6 +185,7 @@ angular.module('spotlightNewsApp')
                         .style("fill", "#c8d2d2")
                         .transition()
                         .duration(3000)
+                        // for all countries
                         .style("fill", function (d) {
                             if (map[d.id]) {
                                 return paletteScale(Math.log(map[d.id]) || 0);
