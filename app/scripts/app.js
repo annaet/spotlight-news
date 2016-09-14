@@ -37,27 +37,24 @@ angular.module('spotlightNewsApp', [
     controller: 'SearchCtrl'
   };
 
-<<<<<<< HEAD
   var geographicMap = {
     name: 'geographicMap',
     url: '/geomap',
     templateUrl: '../views/geographicMap.html',
     controller: 'GeomapCtrl'
-=======
+  };
+
   var ticker = {
     name: 'ticker',
     url: '/ticker',
     templateUrl: '../views/ticker.html',
     controller: 'TickerCtrl'
->>>>>>> 954561eca2c970b81cc8e57cefde1bbad3d95fcf
   };
 
   $stateProvider.state(main);
   $stateProvider.state(treemap);
   $stateProvider.state(search);
-<<<<<<< HEAD
   $stateProvider.state(geographicMap);
-=======
   $stateProvider.state(ticker);
->>>>>>> 954561eca2c970b81cc8e57cefde1bbad3d95fcf
+
 });
