@@ -55,3 +55,33 @@
   margin-top: 20px;
   width: 120px;
 }
+
+/* Ticker */
+
+.ticker-card {
+  padding: 10px 15px;
+  display: inline-block;
+  width: 220px;
+}
+
+.ticker-positive .ticker-change, .glyphicon-triangle-top {
+  color: green;
+}
+
+.ticker-positive.ticker-card {
+  border: 1px solid green;
+  background: #ddf5dd;
+}
+
+.ticker-negative .ticker-change, .glyphicon-triangle-bottom {
+  color: red;
+}
+
+.ticker-negative.ticker-card {
+  border: 1px solid red;
+  background: #fdd0d0;
+}
+
+.ticker-stat {
+  float: right;
+}

@@ -37,7 +37,15 @@ angular.module('spotlightNewsApp', [
     controller: 'SearchCtrl'
   };
 
+  var ticker = {
+    name: 'ticker',
+    url: '/ticker',
+    templateUrl: '../views/ticker.html',
+    controller: 'TickerCtrl'
+  };
+
   $stateProvider.state(main);
   $stateProvider.state(treemap);
   $stateProvider.state(search);
+  $stateProvider.state(ticker);
 });

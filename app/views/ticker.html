@@ -1,0 +1,9 @@
+<h1 style="margin-bottom:20px">Last 7 days</h1>
+
+<div class="ticker-card" ng-class="stats[disease].change > 0 ? 'ticker-positive' : 'ticker-negative'" ng-repeat="disease in diseases">
+  <strong>{{disease}}</strong>
+  <span class="ticker-stat">
+    <span class="ticker-change">{{stats[disease].change}}%</span>
+    <span class="glyphicon" ng-class="stats[disease].change > 0 ? 'glyphicon-triangle-top' : 'glyphicon-triangle-bottom'"></span>
+  </span>
+</div>
