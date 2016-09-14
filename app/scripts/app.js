@@ -37,7 +37,15 @@ angular.module('spotlightNewsApp', [
     controller: 'SearchCtrl'
   };
 
+  var geographicMap = {
+    name: 'geographicMap',
+    url: '/geomap',
+    templateUrl: '../views/geographicMap.html',
+    controller: 'GeomapCtrl'
+  };
+
   $stateProvider.state(main);
   $stateProvider.state(treemap);
   $stateProvider.state(search);
+  $stateProvider.state(geographicMap);
 });

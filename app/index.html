@@ -42,6 +42,7 @@
               <li class="active"><a href="#/">Home</a></li>
               <li><a ui-sref="treemap">TreeMap</a></li>
               <li><a ui-sref="search">Search</a></li>
+              <li><a ui-sref="geographicMap">GeoMap</a></li>
             </ul>
           </div>
         </div>
@@ -70,6 +71,10 @@
     </script>
 
     <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
@@ -85,6 +90,7 @@
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/treemap.js"></script>
         <script src="scripts/controllers/search.js"></script>
+        <script src="scripts/controllers/geographicMap.js"></script>
         <!-- endbuild -->
 </body>
 </html>
