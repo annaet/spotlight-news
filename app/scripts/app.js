@@ -37,6 +37,13 @@ angular.module('spotlightNewsApp', [
     controller: 'SearchCtrl'
   };
 
+  var geographicMap = {
+    name: 'geographicMap',
+    url: '/geomap',
+    templateUrl: '../views/geographicMap.html',
+    controller: 'GeomapCtrl'
+  };
+
   var ticker = {
     name: 'ticker',
     url: '/ticker',
@@ -54,6 +61,7 @@ angular.module('spotlightNewsApp', [
   $stateProvider.state(main);
   $stateProvider.state(treemap);
   $stateProvider.state(search);
+  $stateProvider.state(geographicMap);
   $stateProvider.state(ticker);
   $stateProvider.state(dendrogram);
 });
