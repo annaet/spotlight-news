@@ -1,0 +1,15 @@
+<h1>Search Related News</h1>
+
+<form style="margin-top: 30px">
+  <label class="search-label"><span class="search-label-text">Disease</span><input type="text" ng-model="disease"></input></label>
+  <label class="search-label"><span class="search-label-text">Drug</span><input type="text" ng-model="drug"></input></label>
+  <button class="btn btn-primary search-btn" ng-click="submit()">Go</button>
+</form>
+
+<h3 ng-show="results">Results</h3>
+
+<ul>
+  <li ng-repeat="result in results">
+    <a href="{{result.source.enriched.url.url}}">{{result.source.enriched.url.title}}</a>
+  </li>
+</ul>

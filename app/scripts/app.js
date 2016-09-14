@@ -30,6 +30,14 @@ angular.module('spotlightNewsApp', [
     controller: 'TreemapCtrl'
   };
 
+  var search = {
+    name: 'search',
+    url: '/search',
+    templateUrl: '../views/search.html',
+    controller: 'SearchCtrl'
+  };
+
   $stateProvider.state(main);
   $stateProvider.state(treemap);
+  $stateProvider.state(search);
 });
