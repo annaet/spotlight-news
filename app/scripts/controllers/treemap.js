@@ -17,21 +17,11 @@ angular.module('spotlightNewsApp')
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
 
-    var color = d3.scale.category20c();
-
-    var treemap = d3.layout.treemap()
-        .size([width, height])
-        .sticky(true)
-        .value(function(d) { return d.size; });
-
-    var div = d3.select(".treemap-container")
-        .style("position", "relative")
-        .style("width", (width + margin.left + margin.right) + "px")
-        .style("height", (height + margin.top + margin.bottom) + "px")
-        .style("left", margin.left + "px")
-        .style("top", margin.top + "px");
+    var color = d3.scale.category10();
 
     // var url = "https://gateway-a.watsonplatform.net/calls/data/GetNews?apikey=671dd1efc15d076a80954f5a121585d7fdd5ebbc&start=now-7d&end=now&outputMode=json&return=enriched.url.url,enriched.url.title,enriched.url.enrichedTitle.docSentiment.score,enriched.url.entities.entity.text,enriched.url.entities.entity.relevance,enriched.url.entities.entity.sentiment.score,enriched.url.entities.entity.type&q.enriched.url.title=Depression&q.enriched.url.entities.entity.type=drug";
+
+    // var url = "https://gateway-a.watsonplatform.net/calls/data/GetNews?apikey=671dd1efc15d076a80954f5a121585d7fdd5ebbc&start=now-7d&end=now&outputMode=json&return=enriched.url.url,enriched.url.title,enriched.url.entities.entity.text,enriched.url.entities.entity.relevance,enriched.url.entities.entity.type&q.enriched.url.title=copd&q.enriched.url.entities.entity.type=drug";
 
     // $scope.next = function(next) {
     //   var nextUrl = next ? url + '&next=' + next : url;
@@ -53,11 +43,6 @@ angular.module('spotlightNewsApp')
     // };
     // $scope.next();
 
-    var flare = {
-      name: "flare",
-      children: []
-    };
-
     $scope.acceptedConcepts = [
       'anatomy',
       'continent',
@@ -66,14 +51,32 @@ angular.module('spotlightNewsApp')
       // 'company'
     ];
 
-    $scope.radio = 'count';
-    $scope.usedConcepts = {};
-    var entities = {};
+    function position() {
+      this.style("left", function(d) { return d.x + "px"; })
+          .style("top", function(d) { return d.y + "px"; })
+          .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
+          .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
+    }
 
-    d3.json("../../json/diabetes.json", function(error, data) {
-      if (error) {
-        throw error;
-      }
+    var drawTreeMap = function(data, container) {
+      var flare = {
+        name: "flare",
+        children: []
+      };
+
+      $scope.radio = 'count';
+      $scope.usedConcepts = {};
+      var entities = {};
+
+      var treemap = d3.layout.treemap()
+          .size([width, height])
+          .sticky(true)
+          .value(function(d) { return d.size; });
+
+      var div = d3.select(container)
+          .style("position", "relative")
+          .style("width", (width + margin.left + margin.right) + "px")
+          .style("height", (height + margin.top + margin.bottom) + "px");
 
       var docs = data.result.docs;
 
@@ -142,8 +145,11 @@ angular.module('spotlightNewsApp')
         .enter().append("div")
           .attr("class", "node")
           .call(position)
-          .style("background", function(d) { return d.children ? color(d.name) : null; })
-          .text(function(d) { return d.children ? null : d.name; });
+          .style("background", function(d) { return d.children && d.parent ? color(d.name) : null; })
+          .style("opacity", function(d) { return d.children && d.parent ? 0.75 : 1; })
+          .text(function(d) { return d.children ? null : d.name; })
+          .on("mousemove", mousemove)
+          .on("mouseout", mouseout);
 
       $scope.change = function() {
         var value = function(d) {
@@ -169,12 +175,43 @@ angular.module('spotlightNewsApp')
       };
 
       d3.selectAll("input").on("change", $scope.change());
+    };
+
+    d3.json("../../json/diabetes.json", function(error, data) {
+      if (error) {
+        throw error;
+      } else {
+        drawTreeMap(data, ".treemap-container");
+      }
     });
 
-    function position() {
-      this.style("left", function(d) { return d.x + "px"; })
-          .style("top", function(d) { return d.y + "px"; })
-          .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
-          .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
-    }
+    d3.json("../../json/copd.json", function(error, data) {
+      if (error) {
+        throw error;
+      } else {
+        drawTreeMap(data, ".treemap-container-copd");
+      }
+    });
+
+    var mousemove = function(d) {
+      var xPosition = d3.event.pageX + 5;
+      var yPosition = d3.event.pageY + 5;
+
+      d3.select("#tooltip")
+        .style("left", xPosition + "px")
+        .style("top", yPosition + "px");
+      d3.select("#tooltip #concept")
+        .text(d.parent.name);
+      d3.select("#tooltip #entity")
+        .text(d.name);
+      d3.select("#tooltip #count")
+        .text('count: ' + d.count);
+      d3.select("#tooltip #relevance")
+        .text('relevance: ' + d.size.toFixed(2));
+      d3.select("#tooltip").classed("hidden", false);
+    };
+
+    var mouseout = function() {
+      d3.select("#tooltip").classed("hidden", true);
+    };
   });

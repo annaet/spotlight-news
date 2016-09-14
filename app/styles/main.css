@@ -1,3 +1,5 @@
+/* Treemap */
+
 .node {
   border: solid 1px white;
   font: 10px sans-serif;
@@ -13,4 +15,43 @@
 
 .treemap-form {
   float: right;
+}
+
+#tooltip {
+  position: absolute;
+  width: 300px;
+  height: auto;
+  padding: 10px;
+  background-color: white;
+  -webkit-box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.4);
+  box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+#tooltip.hidden {
+  display: none;
+}
+
+#tooltip p {
+  margin: 0;
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+/* Search */
+
+.search-label {
+  width: 100%;
+}
+
+.search-label-text {
+  width: 60px;
+  display: inline-block;
+}
+
+.search-btn {
+  margin-top: 20px;
+  width: 120px;
 }
