@@ -13,9 +13,10 @@ angular.module('spotlightNewsApp')
     $scope.stats = {};
 
     var get = function(disease) {
-      var url = 'https://gateway-a.watsonplatform.net/calls/data/GetNews?apikey=671dd1efc15d076a80954f5a121585d7fdd5ebbc&start=now-15d&end=now&timeSlice=7d&outputMode=json&return=enriched.url.url,enriched.url.title&q.enriched.url.title=' + disease + '&q.enriched.url.entities.entity.type=drug';
+      var url = 'https://gateway-a.watsonplatform.net/calls/data/GetNews?apikey=53f702f58eac9ece73122ac5406ee2c0ab72abf2&start=now-15d&end=now&timeSlice=7d&outputMode=json&return=enriched.url.url,enriched.url.title&q.enriched.url.title=' + disease + '&q.enriched.url.entities.entity.type=drug';
 
       $http.get(url).then(function(data) {
+        console.log(data);
         var slices = data.data.result.slices;
         var start = slices[slices.length - 2];
         var end = slices[slices.length - 1];

@@ -1,0 +1,50 @@
+<head>
+    URL:
+    <br>
+    <input type="text" name="URL" id="URL" style="width: 1000px;">
+    <br>
+    <button type="button" onclick="submitFunction()">Submit</button>
+</head>
+
+<body>
+
+    <p id="response">
+
+    </p>
+
+
+
+</body>
+
+<script>
+    function submitFunction() {
+
+        var givenURL = document.getElementById("URL").value;
+        var generatedJSON = "https://gateway-a.watsonplatform.net/calls/url/URLGetRelations?apikey=29b0e2628cc366afb201bdf3b11d7338fc1bb14a&outputMode=json&maxRetrieve=20&url=" + givenURL + "&return=enriched.url.url,enriched.url.title";
+
+        sentenceArray = []
+
+        var result;
+        $.getJSON(generatedJSON, function (data) {
+            result = data;
+
+            for (var i = 0; i < result.relations.length; i++) {
+                if (result.relations[i].subject && result.relations[i].action && result.relations[i].object) {
+                    var tempSentence = result.relations[i].subject.text + " " + result.relations[i].action.text + " " + result.relations[i].object.text;
+                    sentenceArray.push(tempSentence);
+
+                }
+
+            }
+
+            var stringOutput = ""
+            for (var i = 0; i < sentenceArray.length; i++) {
+                stringOutput = stringOutput + String(sentenceArray[i]) + "\n";
+            }
+            document.getElementById("response").innerHTML = stringOutput;
+        });
+
+
+    }
+</script>
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>

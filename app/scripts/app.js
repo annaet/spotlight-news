@@ -58,10 +58,18 @@ angular.module('spotlightNewsApp', [
     controller: 'DendrogramCtrl'
   };
 
+  var summary = {
+    name: 'summary',
+    url: '/summary',
+    templateUrl: '../views/summary.html',
+    controller: 'SummaryCtrl'
+  };
+
   $stateProvider.state(main);
   $stateProvider.state(treemap);
   $stateProvider.state(search);
   $stateProvider.state(geographicMap);
   $stateProvider.state(ticker);
   $stateProvider.state(dendrogram);
+  $stateProvider.state(summary);
 });
